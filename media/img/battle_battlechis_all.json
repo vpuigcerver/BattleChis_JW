@@ -1,0 +1,52 @@
+{"frames": {
+
+"battle_battlechis.png":
+{
+	"frame": {"x":2,"y":2,"w":916,"h":916},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":916,"h":916},
+	"sourceSize": {"w":916,"h":916}
+},
+"fitxa_celest.png":
+{
+	"frame": {"x":920,"y":2,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
+	"sourceSize": {"w":24,"h":24}
+},
+"fitxa_groga.png":
+{
+	"frame": {"x":920,"y":28,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
+	"sourceSize": {"w":24,"h":24}
+},
+"fitxa_verda.png":
+{
+	"frame": {"x":920,"y":54,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
+	"sourceSize": {"w":24,"h":24}
+},
+"fitxa_vermela.png":
+{
+	"frame": {"x":920,"y":80,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
+	"sourceSize": {"w":24,"h":24}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "battle_battlechis_all.png",
+	"format": "RGBA8888",
+	"size": {"w":946,"h":920},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6a5eb978e4e4f4c36bc1ad20abfbddbf:e89d8f3f1cae297fb98279a7b4a2a7bc:d65ed9185f7889bd65ab679ced98be8d$"
+}
+}

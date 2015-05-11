@@ -1,0 +1,60 @@
+{"frames": {
+
+"dado1.png":
+{
+	"frame": {"x":2,"y":2,"w":167,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":167},
+	"sourceSize": {"w":167,"h":167}
+},
+"dado2.png":
+{
+	"frame": {"x":171,"y":2,"w":167,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":167},
+	"sourceSize": {"w":167,"h":167}
+},
+"dado3.png":
+{
+	"frame": {"x":340,"y":2,"w":167,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":167},
+	"sourceSize": {"w":167,"h":167}
+},
+"dado4.png":
+{
+	"frame": {"x":509,"y":2,"w":167,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":167},
+	"sourceSize": {"w":167,"h":167}
+},
+"dado5.png":
+{
+	"frame": {"x":678,"y":2,"w":167,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":167},
+	"sourceSize": {"w":167,"h":167}
+},
+"dado6.png":
+{
+	"frame": {"x":847,"y":2,"w":167,"h":167},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":167},
+	"sourceSize": {"w":167,"h":167}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "dados.png",
+	"format": "RGBA8888",
+	"size": {"w":1016,"h":171},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:98e04270a082a29633aa58f9b5b5dc0e:86575f05a634d1b87d91d04f528f73b5:92bd70315a3bfc5c33852ccc8ca07f11$"
+}
+}

@@ -8,7 +8,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":916,"h":916},
 	"sourceSize": {"w":916,"h":916}
 },
-"fitxa_celest.png":
+"fitxa_blau.png":
 {
 	"frame": {"x":920,"y":2,"w":24,"h":24},
 	"rotated": false,
@@ -16,7 +16,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
 	"sourceSize": {"w":24,"h":24}
 },
-"fitxa_groga.png":
+"fitxa_groc.png":
 {
 	"frame": {"x":920,"y":28,"w":24,"h":24},
 	"rotated": false,
@@ -24,7 +24,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
 	"sourceSize": {"w":24,"h":24}
 },
-"fitxa_verda.png":
+"fitxa_verd.png":
 {
 	"frame": {"x":920,"y":54,"w":24,"h":24},
 	"rotated": false,
@@ -32,7 +32,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
 	"sourceSize": {"w":24,"h":24}
 },
-"fitxa_vermela.png":
+"fitxa_roja.png":
 {
 	"frame": {"x":920,"y":80,"w":24,"h":24},
 	"rotated": false,

@@ -1,11 +1,13 @@
 var BoardView = function() {
     
-    var BOARD_LINE_LIMIT_WIDTH = 8;
-  
+    var BOARD_LINE_LIMIT_WIDTH = 3;
+
     // Attributes
     var self = this;
     var boardPositions = [];
-   
+    var fitxes = [];
+    var boardManager = new BoardManager();
+    var board = new Board();
 /*    this.updateBoard = function(logicBoard) {
       for(positionIndex in boardPositions) {
           if(!boardPositions[positionIndex].painted) {
@@ -42,9 +44,12 @@ var BoardView = function() {
       
       if(pressedPosition != -1) {
          var valorDados = tirarDados();
-          console.log(valorDados);
+          //console.log(valorDados);
         //self.listener.onPositionPressed(pressedPosition); 
-          var numerosCasilla = verCasellesExteriors(valorDados); // 1 = numero de casilla enviada
+          
+          boardManager.makeMove(5);
+          
+          var numerosCasilla = board.verCasellesExteriors(valorDados); // 1 = numero de casilla enviada
           for ( var i = 0; i <=1; i++){
             console.log(numerosCasilla[i]);   
           }
@@ -61,7 +66,9 @@ var BoardView = function() {
         var randomdice=Math.round(Math.random()*5)+1;
         window.game.add.sprite(375, 375, 'dados','dado'+randomdice+'.png');
         return randomdice;
-    }
+    };
+    
+    
     
     // Private
     var calculateBoardPosition = function() {
@@ -120,31 +127,45 @@ var BoardView = function() {
   };
     
     */
-    var verCasellesExteriors = function(id){
-    var Caselles=[[5,26],[4,25],[3,24],[2,23],[1,21],[42,43],[63,64],[84,85],[105,106],[126,127],[147,148],[168,169],[189,190],[210,211],[231,232],[252,253],[273,295],[315,316],[336,337],[357,358],[378,379],[399,421],[401,422],[402,423],[403,424],[404,425],[405,426],[406,427],[407,428],[408,429],[409,430],[410,431],[411,432],[412,434],[414,435],[415,436],[416,437],[417,438],[419,439],[397,398],[376,377],[355,356],[334,335],[313,314],[292,293],[271,272],[250,251],[229,230],[208,209],[187,188],[145,167],[124,125],[103,104],[82,83],[61,62],[19,41],[18,39],[17,38],[16,37],[15,36],[14,35],[13,34],[12,33],[11,32],[10,31],[9,30],[8,29],[7,27]]
-    var arrayCaselles = new Array(2);
-     
-     if (id>68){
-         id = id-68;
-     }
-     
-     for ( var i = 0; i <=1; i++){
-       
-            arrayCaselles[0] = Caselles[id-1][0]; 
-            arrayCaselles[1] = Caselles[id-1][1];  
-          }
-     
-    return[
-            arrayCaselles[0],
-            arrayCaselles[1] 
-        ];
- };
+   
+    var crearFitxas = function() {
+        var f1 = new Fitxa(1,"groc",66);
+        var f2 = new Fitxa(2,"groc",88);
+        var f3 = new Fitxa(3,"groc",108);
+        var f4 = new Fitxa(4,"groc",130);
+        
+        var f5 = new Fitxa(5,"roja",310);
+        var f6 = new Fitxa(6,"roja",332);
+        var f7 = new Fitxa(7,"roja",352);
+        var f8 = new Fitxa(8,"roja",374);
+        
+        var f9 = new Fitxa(9,"verd",339);
+        var f10 = new Fitxa(10,"verd",361);
+        var f11 = new Fitxa(11,"verd",341);
+        var f12 = new Fitxa(12,"verd",363);
+        
+        var f13 = new Fitxa(13,"blau",77);
+        var f14 = new Fitxa(14,"blau",99);
+        var f15 = new Fitxa(15,"blau",79);
+        var f16 = new Fitxa(16,"blau",101);
+        
+        
+        fitxes = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16];
+        
+        for(var i = 1; i <= 16; i++){
+            var position = boardPositions[fitxes[i-1].getPosition()];
+            console.log(fitxes[i-1].getColor());
+            game.add.sprite(position.left, position.top, 'battle_battlechis','fitxa_'+fitxes[i-1].getColor()+'.png');   
+        }
+
+    };
     
     // Constructor
     (function() {
         window.game.add.sprite(0, 0, 'battle_battlechis','battle_battlechis.png');
-      
+        
         window.game.input.onDown.add(self.onMouseDown);      
         calculateBoardPosition();
+        crearFitxas();  
     })();
 };

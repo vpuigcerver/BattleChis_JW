@@ -8,11 +8,13 @@ function Position (id) {
     this.setToFull = function() {
       empty = false;
     };
-    this.isEmpty = function() {
-        
+    this.isEmpty = function() {       
         return empty;
     };
-
+    this.getId = function() {
+        return id;
+    };
+    
     
     
 };

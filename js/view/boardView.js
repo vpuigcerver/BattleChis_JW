@@ -4,10 +4,14 @@ var BoardView = function() {
 
     // Attributes
     var self = this;
+    
+    var tirant = 0; //tirant->0, escollint fitxa -> 1
+    var valorDados = -1;
+    
     var boardPositions = [];
     var fitxes = [];
     var boardManager = new BoardManager();
-    var board = new Board();
+    
 /*    this.updateBoard = function(logicBoard) {
       for(positionIndex in boardPositions) {
           if(!boardPositions[positionIndex].painted) {
@@ -20,42 +24,49 @@ var BoardView = function() {
     };
     */
     this.onMouseDown = function(mouseEvent) {
-         var pressedPosition = -1;
-      
-      for(positionIndex in boardPositions) {
-        var position = boardPositions[positionIndex];
+        var esquina_button_right = boardPositions[242];
+        var esquina_top_left = boardPositions[198];
         
-        var positionLimit =  {
-          minX: position.left,
-          maxX: position.left + position.width,
-          minY: position.top,
-          maxY: position.top + position.height
+        if (tirant==0){
+            var dadosLimit =  {
+              minX: esquina_top_left.left,
+              maxX: esquina_button_right.right,
+              minY: esquina_top_left.top,
+              maxY: esquina_button_right.button
+            }
+
+            if((mouseEvent.x >= dadosLimit.minX) && 
+               (mouseEvent.x <= dadosLimit.maxX) &&
+               (mouseEvent.y >= dadosLimit.minY) &&
+               (mouseEvent.y <= dadosLimit.maxY))
+            {
+                console.log("tirar dados");
+              valorDados = tirarDados();
+
+              tirant = 1; //toca mover
+
+              /*boardManager.makeMove(5);
+
+              var numerosCasilla = board.verCasellesExteriors(valorDados); // 1 = numero de casilla enviada
+              for ( var i = 0; i <=1; i++){
+              console.log(numerosCasilla[i]);   
+              }*/
+            }
+        }else {
+            console.log("intentando dar a fitxa");
+            var board = boardManager.getBoard(); 
+            var indexFitxa = board.searchPosition(mouseEvent.x, mouseEvent.y, fitxes, boardPositions);
+            
+            console.log("dado en fitxa " + indexFitxa);
+            if(indexFitxa != -1){
+                var arrayResult = boardManager.makeMove(fitxes, indexFitxa, valorDados, boardPositions, this.mFitxesSprites);
+                var canMove = arrayResult[0];
+                fitxes = arrayResult[1];
+            }
+            if(canMove){
+                tirant = 0;
+            }
         }
-        
-        if((mouseEvent.x >= positionLimit.minX) && 
-           (mouseEvent.x <= positionLimit.maxX) &&
-           (mouseEvent.y >= positionLimit.minY) &&
-           (mouseEvent.y <= positionLimit.maxY))
-        {
-          pressedPosition = positionIndex;
-          break;
-        }
-      }
-      
-      if(pressedPosition != -1) {
-         var valorDados = tirarDados();
-          //console.log(valorDados);
-        //self.listener.onPositionPressed(pressedPosition); 
-          
-          boardManager.makeMove(5);
-          
-          var numerosCasilla = board.verCasellesExteriors(valorDados); // 1 = numero de casilla enviada
-          for ( var i = 0; i <=1; i++){
-            console.log(numerosCasilla[i]);   
-          }
-                      
-      }
-        
     };
     
     this.addListener = function(listener) {
@@ -68,8 +79,7 @@ var BoardView = function() {
         return randomdice;
     };
     
-    
-    
+        
     // Private
     var calculateBoardPosition = function() {
       var boardSize = {
@@ -81,12 +91,15 @@ var BoardView = function() {
       var elementHeight = boardSize.height/ 21;
       
       var minWidth = BOARD_LINE_LIMIT_WIDTH;
+        
       for(var horizontal = 0; horizontal < 21; ++horizontal) {
         var minHeight = BOARD_LINE_LIMIT_WIDTH;
         
         for(var vertical = 0; vertical < 21; ++vertical) {
           boardPositions.push({
             top: minHeight,
+            button: minHeight + elementHeight,
+            right: minWidth + elementHeight,
             left: minWidth,
             width: elementWidth,
             height: elementHeight,
@@ -98,8 +111,7 @@ var BoardView = function() {
         
         minWidth += elementWidth;
       }
-      console.log(boardPositions);
-      debugDrawBoardPositions();
+      debugDrawBoardPositions(); // Comentar para ver bien el tablero
   };
   
   var debugDrawBoardPositions = function() {
@@ -112,50 +124,38 @@ var BoardView = function() {
       graphics.drawRect(position.left, position.top, position.width, position.height);  
     }
   };
-    /*
-  var drawMovement = function(positionIndex, isCross) {
-    var position = boardPositions[positionIndex];
     
-    if(isCross)
-    {
-      game.add.sprite(position.left, position.top, 'boardSprite', 'cross.png');  
-    }
-    else 
-    {
-      game.add.sprite(position.left, position.top, 'boardSprite', 'circle.png');  
-    }
-  };
-    
-    */
-   
+   //private 
     var crearFitxas = function() {
-        var f1 = new Fitxa(1,"groc",66);
-        var f2 = new Fitxa(2,"groc",88);
-        var f3 = new Fitxa(3,"groc",108);
-        var f4 = new Fitxa(4,"groc",130);
+        var f1 = new Fitxa(1,"groc",66,0);
+        var f2 = new Fitxa(2,"groc",88,0);
+        var f3 = new Fitxa(3,"groc",108,0);
+        var f4 = new Fitxa(4,"groc",130,0);
         
-        var f5 = new Fitxa(5,"roja",310);
-        var f6 = new Fitxa(6,"roja",332);
-        var f7 = new Fitxa(7,"roja",352);
-        var f8 = new Fitxa(8,"roja",374);
+        var f5 = new Fitxa(5,"verd",339,0);
+        var f6 = new Fitxa(6,"verd",361,0);
+        var f7 = new Fitxa(7,"verd",341,0);
+        var f8 = new Fitxa(8,"verd",363,0);
         
-        var f9 = new Fitxa(9,"verd",339);
-        var f10 = new Fitxa(10,"verd",361);
-        var f11 = new Fitxa(11,"verd",341);
-        var f12 = new Fitxa(12,"verd",363);
+        var f9 = new Fitxa(9,"roja",310,0);
+        var f10 = new Fitxa(10,"roja",332,0);
+        var f11 = new Fitxa(11,"roja",352,0);
+        var f12 = new Fitxa(12,"roja",374,0);
         
-        var f13 = new Fitxa(13,"blau",77);
-        var f14 = new Fitxa(14,"blau",99);
-        var f15 = new Fitxa(15,"blau",79);
-        var f16 = new Fitxa(16,"blau",101);
+        var f13 = new Fitxa(13,"blau",77,0);
+        var f14 = new Fitxa(14,"blau",99,0);
+        var f15 = new Fitxa(15,"blau",79,0);
+        var f16 = new Fitxa(16,"blau",101,0);
         
         
         fitxes = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16];
         
-        for(var i = 1; i <= 16; i++){
-            var position = boardPositions[fitxes[i-1].getPosition()];
-            console.log(fitxes[i-1].getColor());
-            game.add.sprite(position.left, position.top, 'battle_battlechis','fitxa_'+fitxes[i-1].getColor()+'.png');   
+        this.mFitxesSprites = {};
+        
+        for(var i = 0; i < 16; i++){
+            var position = boardPositions[fitxes[i].getPosition()];
+            var elementId = fitxes[i].getId();
+            mFitxesSprites[elementId] = game.add.sprite(position.left, position.top, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
         }
 
     };

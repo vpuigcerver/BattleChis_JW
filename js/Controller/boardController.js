@@ -1,10 +1,10 @@
 var BoardController = function() {
     var view = new BoardView();
     //var manager = new BoardManager();
-    //var isGameFinished = false;
+    var isGameFinished = false;
         
     this.onPositionPressed = function(position) {
-        /*if(!isGameFinished) {
+       /* if(!isGameFinished) {
             
             var wasAbleToMakeMove = manager.makeMove(position);
             if(!wasAbleToMakeMove) {

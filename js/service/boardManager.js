@@ -13,7 +13,7 @@ var BoardManager = function() {
       39, //ROJA
       56 //BLAU
   ];
-    
+     var OFFSET_FITXA = 10;
   // Attributes
   var currentColor = PLAYER_COLOR.GROC;
   var board = new Board();
@@ -25,14 +25,11 @@ var BoardManager = function() {
       /*ioSocket.emit('makeMove', selectedPositionIndex);
       */
       var fitxa = fitxes[indexFitxa];
-      
       var posToGo = fitxa.getPosition();
-      
       var casellaIni = board.getCasella(posToGo);
-      
       var casellaToGo = casellaIni;
-       
-    
+      
+
       if (fitxa.getPosition() == fitxa.getPosIni()){
           casellaToGo = INI_CASELLA_COLOR[currentColor] + moveDistance;
           casellaIni = INI_CASELLA_COLOR[currentColor];
@@ -76,38 +73,61 @@ var BoardManager = function() {
           return [false, fitxes];
       }
       
-      console.log("internalPo: " + internal_pos);
-      var currentStatus = getCurrentStatus();
-
-      console.log("CurrentStatus: " + currentStatus);
+    //  console.log("internalPo: " + internal_pos);
+      var currentStatus = this.getCurrentStatus();
+      var potMoureFitxa = false;
+      var teFitxesEnCasa = false;
+      var quantsTeACasa = 0;
+    //  console.log("CurrentStatus: " + currentStatus);
 
       if (Math.floor(indexFitxa/4) == currentStatus){
+          //Comprovem si en el grup de fitxes del jugador te fitxes dintre de casa
+          for(var tempContador = (4*currentStatus); tempContador < (4*currentStatus)+4; tempContador++){
+            if(fitxes[tempContador].getPosIni()== fitxes[tempContador].getPosition()){
+                teFitxesEnCasa = true; 
+                quantsTeACasa = quantsTeACasa +1;
+            }
+          }
+          console.log("Is "+teFitxesEnCasa +"Check fitxes in home: " + quantsTeACasa); 
+          if(teFitxesEnCasa){
+              if(quantsTeACasa==4){
+                if(moveDistance!=5){
+                    console.log("No has sacado un 5");
+                    potMoureFitxa = true;
+                }
+              }
+          }
+          if(!potMoureFitxa){
+              if(moveDistance==5){
+                  if(quantsTeACasa!=0){
+                      console.log("ha de moure una fitxa de casa");
+                  }
+              }
           board.setPositionStatus(fitxa.getPosition(),BOARD_POSITION_COLOR.EMPTY);
-          console.log("Position fitxa abans: " + fitxa.getPosition());
+         // console.log("Position fitxa abans: " + fitxa.getPosition());
           fitxa.setPosition(arrayPosition[internal_pos].getId());
           fitxes[i] = fitxa;
           board.setPositionStatus(fitxa.getPosition(), currentStatus);
-          console.log("Position fitxa despres: " + fitxa.getPosition());
+         // console.log("Position fitxa despres: " + fitxa.getPosition());
           //console.log("posicio 0: " + board.verCasellesExteriors(fitxa.getPosition())[0].isEmpty() + " i posicio 1: " + board.verCasellesExteriors(fitxa.getPosition())[1].isEmpty());
-          updateCurrentColor();
-
-
+       
           for(var i = 0; i < 16; i++){
+                      
                 var position = boardPositions[fitxes[i].getPosition()];
 
                 var elementId = fitxes[i].getId();
                 spriteFitxa[elementId].kill();
 
-                spriteFitxa[elementId] = game.add.sprite(position.left, position.top, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
-
-
+                spriteFitxa[elementId] = game.add.sprite(position.left + OFFSET_FITXA, position.top + OFFSET_FITXA, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
           }
+           }
+          updateCurrentColor();
+
       }else {
           //No es el torn de la fitxa
           return [false, fitxes];
       }
       
-      board.debugPrint();
       return [true, fitxes];
       
   };
@@ -121,7 +141,7 @@ var BoardManager = function() {
   };
     
   // Private
-  var getCurrentStatus = function() {
+  this.getCurrentStatus = function() {
     if(currentColor === PLAYER_COLOR.GROC) {
         return BOARD_POSITION_COLOR.GROC;
     }  
@@ -136,6 +156,8 @@ var BoardManager = function() {
     }
   };
   
+  
+
   var updateCurrentColor = function() {
     if(currentColor === PLAYER_COLOR.GROC) {
       currentColor = PLAYER_COLOR.VERD;
@@ -149,6 +171,7 @@ var BoardManager = function() {
     else if (currentColor === PLAYER_COLOR.VERD){
       currentColor = PLAYER_COLOR.ROJA;
     }
+    console.log("Es el turno de "+currentColor);
   };    
     
   var arePositionsEqual = function(positions) {

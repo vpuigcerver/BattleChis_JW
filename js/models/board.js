@@ -33,7 +33,7 @@ var Board = function() {
                (y >= positionLimit.minY) &&
                (y <= positionLimit.maxY))
             {
-                console.log("fitxa :" + i);
+              //  console.log("fitxa :" + i);
               return i;
             }
             i += 1;
@@ -75,12 +75,6 @@ var Board = function() {
         }
     };
     
-    this.debugPrint = function() {
-      for(positionIndex in positions) {
-          //console.log(positions[positionIndex].debugPrint());
-      }
-      
-    };
     
     // Private methods
     

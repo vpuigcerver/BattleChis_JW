@@ -1,7 +1,7 @@
 var BoardView = function() {
     
     var BOARD_LINE_LIMIT_WIDTH = 3;
-
+    var OFFSET_FITXA = 10;
     // Attributes
     var self = this;
     
@@ -12,60 +12,63 @@ var BoardView = function() {
     var fitxes = [];
     var boardManager = new BoardManager();
     
-/*    this.updateBoard = function(logicBoard) {
-      for(positionIndex in boardPositions) {
-          if(!boardPositions[positionIndex].painted) {
-            var logicPosition = logicBoard.getPosition(positionIndex);
-            if(!logicPosition.isEmpty()) {
-              drawMovement(positionIndex, logicPosition.isCross());
-            }
-          }
-      }
-    };
-    */
     this.onMouseDown = function(mouseEvent) {
         var esquina_button_right = boardPositions[242];
         var esquina_top_left = boardPositions[198];
         
         if (tirant==0){
-            var dadosLimit =  {
+            var dadosLimit = {
               minX: esquina_top_left.left,
               maxX: esquina_button_right.right,
               minY: esquina_top_left.top,
               maxY: esquina_button_right.button
             }
-
+            
             if((mouseEvent.x >= dadosLimit.minX) && 
                (mouseEvent.x <= dadosLimit.maxX) &&
                (mouseEvent.y >= dadosLimit.minY) &&
                (mouseEvent.y <= dadosLimit.maxY))
             {
-                console.log("tirar dados");
+              console.log("tirar dados");
               valorDados = tirarDados();
 
               tirant = 1; //toca mover
-
-              /*boardManager.makeMove(5);
-
-              var numerosCasilla = board.verCasellesExteriors(valorDados); // 1 = numero de casilla enviada
-              for ( var i = 0; i <=1; i++){
-              console.log(numerosCasilla[i]);   
-              }*/
+              game.world.remove(text);
+             
+                
             }
         }else {
-            console.log("intentando dar a fitxa");
+            //console.log("intentando dar a fitxa");
             var board = boardManager.getBoard(); 
             var indexFitxa = board.searchPosition(mouseEvent.x, mouseEvent.y, fitxes, boardPositions);
-            
-            console.log("dado en fitxa " + indexFitxa);
+            var quantsTeACasa = 0;
+          /*  if (Math.floor(indexFitxa/4) == boardManager.getCurrentStatus()){
+                for(var tempContador = 0; tempContador < 4; tempContador++){
+                    if(fitxes[indexFitxa].getPosIni()== fitxes[indexFitxa].getPosition()){
+                        teFitxesEnCasa = true; 
+                        quantsTeACasa = quantsTeACasa +1;
+                    }
+                }
+            }*/
+        
+           // console.log("dado en fitxa " + indexFitxa);
             if(indexFitxa != -1){
                 var arrayResult = boardManager.makeMove(fitxes, indexFitxa, valorDados, boardPositions, this.mFitxesSprites);
                 var canMove = arrayResult[0];
                 fitxes = arrayResult[1];
+               
             }
             if(canMove){
                 tirant = 0;
+                game.world.remove(dado);
+                text = game.add.text(game.world.centerX-95, game.world.centerY-50, "SIGUIENTE\n TURNO\n-CLIK-", {
+                font: "35px Arial",
+                fill: "#f0ff0f",
+                align: "center"
+                });
+               
             }
+            
         }
     };
     
@@ -75,7 +78,7 @@ var BoardView = function() {
     
     var tirarDados = function(){
         var randomdice=Math.round(Math.random()*5)+1;
-        window.game.add.sprite(375, 375, 'dados','dado'+randomdice+'.png');
+        dado = window.game.add.sprite(375, 375, 'dados','dado'+randomdice+'.png');
         return randomdice;
     };
     
@@ -111,7 +114,7 @@ var BoardView = function() {
         
         minWidth += elementWidth;
       }
-      debugDrawBoardPositions(); // Comentar para ver bien el tablero
+     // debugDrawBoardPositions(); // Comentar para ver bien el tablero
   };
   
   var debugDrawBoardPositions = function() {
@@ -155,10 +158,12 @@ var BoardView = function() {
         for(var i = 0; i < 16; i++){
             var position = boardPositions[fitxes[i].getPosition()];
             var elementId = fitxes[i].getId();
-            mFitxesSprites[elementId] = game.add.sprite(position.left, position.top, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
+            mFitxesSprites[elementId] = game.add.sprite(position.left + OFFSET_FITXA, position.top + OFFSET_FITXA, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
         }
 
     };
+    
+   
     
     // Constructor
     (function() {
@@ -167,5 +172,13 @@ var BoardView = function() {
         window.game.input.onDown.add(self.onMouseDown);      
         calculateBoardPosition();
         crearFitxas();  
+        
+          if(tirant == 0){
+            text = game.add.text(game.world.centerX-95, game.world.centerY-50, "-START!-\n AQUI", {
+            font: "45px Arial",
+            fill: "#ff0044",
+            align: "center"
+            });
+        }
     })();
 };

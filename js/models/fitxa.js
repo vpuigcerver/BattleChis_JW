@@ -5,6 +5,8 @@ function Fitxa (id,colour, pos,casella) {
     var pos_ini = pos;
     var casella = casella;
     
+    var pujant = false;
+    
     this.getId = function() {
         return id;
     }
@@ -31,5 +33,13 @@ function Fitxa (id,colour, pos,casella) {
     
     this.moverFicha = function(avanzaX){
            this.id = this.id + avanzaX;
+    }
+    
+    this.getPujant = function() {
+        return this.pujant;
+    }
+    
+    this.setPujant = function(puja){
+        this.pujant = puja;
     }
 };

@@ -1,4 +1,4 @@
-var game = new Phaser.Game(
+/*var game = new Phaser.Game(
 	916,
 	916,
 	Phaser.AUTO,
@@ -21,4 +21,5 @@ var game = new Phaser.Game(
             
         }
     }
-);
+);*/
+

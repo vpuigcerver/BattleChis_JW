@@ -1,5 +1,5 @@
 var BoardView = function() {
-    
+    console.log("created View");
     var BOARD_LINE_LIMIT_WIDTH = 3;
     var OFFSET_FITXA = 10;
     // Attributes
@@ -12,65 +12,108 @@ var BoardView = function() {
     var fitxes = [];
     var mFitxesSprites = {};
     var boardManager = new BoardManager();
+    var dado;
+    var cuadro_turno;
+    var numeroDeSisos = 0;
+    var beforeColor = 0;
     
     this.onMouseDown = function(mouseEvent) {
         var esquina_button_right = boardPositions[242];
         var esquina_top_left = boardPositions[198];
-        
+
         if (tirant==0){
             var dadosLimit = {
-              minX: esquina_top_left.left,
-              maxX: esquina_button_right.right,
-              minY: esquina_top_left.top,
-              maxY: esquina_button_right.button
+                minX: esquina_top_left.left,
+                maxX: esquina_button_right.right,
+                minY: esquina_top_left.top,
+                maxY: esquina_button_right.button
             }
-            
+
             if((mouseEvent.x >= dadosLimit.minX) && 
-               (mouseEvent.x <= dadosLimit.maxX) &&
-               (mouseEvent.y >= dadosLimit.minY) &&
-               (mouseEvent.y <= dadosLimit.maxY))
+                (mouseEvent.x <= dadosLimit.maxX) &&
+                (mouseEvent.y >= dadosLimit.minY) &&
+                (mouseEvent.y <= dadosLimit.maxY))
             {
-              
-              valorDados = tirarDados();
-              console.log("tirar dados: "+valorDados);
-              tirant = 1; //toca mover
-              game.world.remove(text);
-             
-                
+                if(dado != null){
+                     dado.kill();
+                }
+                if (cuadro_turno != null){
+                    cuadro_turno.kill();
+                }
+                valorDados = tirarDados();
+                console.log("tirar dados, numero: " + valorDados);
+                tirant = 1; //toca mover
+                game.world.remove(text);
+                var potJugarArray = boardManager.canPlayTurn(fitxes, valorDados);
+                var potJugar = potJugarArray[0];
+                fitxes = potJugarArray[1];
+                var currentColor = potJugarArray[2];
+
+                console.log("potJugar: " + potJugar + " currentColor: " + currentColor);
+                if(!potJugar && valorDados != 6){
+                    console.log("CANVIA DE TORN PERQUE NO POT MOURE");
+                    boardManager.updateCurrentColor();
+                    tirant = 0;
+                    numeroDeSisos = 0;
+                    //redibujarDados();
+                }else if (!potJugar){
+                    tirant = 0;
+                    if(currentColor == beforeColor){
+                        numeroDeSisos++;
+                    }else{
+                        beforeColor = currentColor;
+                        numeroDeSisos = 1;
+                    }
+                }else if (valorDados == 6){
+                    if(currentColor == beforeColor){
+                        numeroDeSisos++;
+                    }else{
+                        beforeColor = currentColor;
+                        numeroDeSisos = 1;
+                    }
+                }
             }
         }else {
             //console.log("intentando dar a fitxa");
             var board = boardManager.getBoard(); 
             var indexFitxa = board.searchPosition(mouseEvent.x, mouseEvent.y, fitxes, boardPositions);
-        
-           // console.log("dado en fitxa " + indexFitxa);
+
             if(indexFitxa != -1){
                 var arrayResult = boardManager.makeMove(fitxes, indexFitxa, valorDados, boardPositions, mFitxesSprites);
                 var canMove = arrayResult[0];
                 fitxes = arrayResult[1];
-               
             }
-            if(canMove){
-                tirant = 0;
-                game.world.remove(dado);
-                text = game.add.text(game.world.centerX-95, game.world.centerY-50, "SIGUIENTE\n TURNO\n-CLIK-", {
-                font: "35px Arial",
-                fill: "#f0ff0f",
-                align: "center"
-                });
-               
-            }
-            
+            if(canMove && valorDados != 6){
+                boardManager.updateCurrentColor();
+            }               
         }
-    };
+        if(canMove){
+            tirant = 0;
+            redibujarDados();               
+        } 
+    }; //mouseEvent
     
     this.addListener = function(listener) {
       self.listener = listener;
     };
     
+
+    var redibujarDados = function(){
+        game.world.remove(dado);
+        game.world.remove(cuadro_turno);
+        text = game.add.text(game.world.centerX-95, game.world.centerY-50, "SIGUIENTE\n TURNO\n-CLIK-", {
+        font: "35px Arial",
+        fill: "#f0ff0f",
+        align: "center"
+        });
+    };
+    
     // Private
     var tirarDados = function(){
         var randomdice=Math.round(Math.random()*5)+1;
+        var currentColor = boardManager.getCurrentStatus();
+        //Dibuixar quadre del color que toqui
+        cuadro_turno = window.game.add.image(355, 355, 'cuadrado'+currentColor);
         dado = window.game.add.sprite(375, 375, 'dados','dado'+randomdice+'.png');
         return randomdice;
     };
@@ -105,7 +148,6 @@ var BoardView = function() {
         
         minWidth += elementWidth;
       }
-     // debugDrawBoardPositions(); // Comentar para ver bien el tablero
   };
   
   this.debugDrawBoardPositions = function() {
@@ -118,6 +160,7 @@ var BoardView = function() {
       graphics.drawRect(position.left, position.top, position.width, position.height);  
     }
   };
+    
     this.createBoard = function(imagenbattlechis){
         game.add.sprite(0,0,imagenbattlechis,'battle_battlechis.png');
         calculateBoardPosition();
@@ -159,8 +202,13 @@ var BoardView = function() {
             });
         }
     };
+    this.getFitxes = function(){
+        return fitxes;   
+    };
+    
      (function() {
-        window.game.input.onDown.add(self.onMouseDown);     
+         window.game.input.onDown.add(self.onMouseDown);     
          game.load.atlasJSONHash('dados', 'media/img/dados.png', 'media/img/dados.json');
+         
     })();
 };

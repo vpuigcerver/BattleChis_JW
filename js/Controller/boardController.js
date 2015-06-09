@@ -33,22 +33,3 @@ var BoardController = function() {
         view.addListener(self);
     })();
 };
-
-var BoardController = {
-    preload: function() {
-        game.load.atlasJSONHash('battle_battlechis', 'media/img/battle_battlechis_all.png', 'media/img/battle_battlechis_all.json');
-        game.load.atlasJSONHash('dados', 'media/img/dados.png', 'media/img/dados.json');
-    },
-    
-    create: function () {
-        this.view = new BoardTempView(this);
-        this.view.createBoard('battle_battlechis','dados');
-        //view.debugDrawBoardPositions();
-        this.view.addListener(this);
-
-    },
-    
-    update: function() {
-       
-    }
-};

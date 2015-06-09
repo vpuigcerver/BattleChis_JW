@@ -13,6 +13,14 @@ var BoardManager = function() {
       39, //ROJA
       56 //BLAU
   ];
+    
+  var CASELLA_ESPECIAL = [
+      17, //GROC
+      34, //VERD
+      51, //ROJA
+      68 //BLAU
+  ];
+    
      var OFFSET_FITXA = 10;
   // Attributes
   var currentColor = PLAYER_COLOR.GROC;
@@ -24,14 +32,15 @@ var BoardManager = function() {
   this.makeMove = function(fitxes, indexFitxa, moveDistance, boardPositions, spriteFitxa) {
       /*ioSocket.emit('makeMove', selectedPositionIndex);
       */
+
       var fitxa = fitxes[indexFitxa];
       var posToGo = fitxa.getPosition();
-      var casellaIni = board.getCasella(posToGo);
+      var casellaIni = board.getCasella(posToGo, fitxa.getPujant() ? currentColor : -1);
       var casellaToGo = casellaIni;
       
 
       if (fitxa.getPosition() == fitxa.getPosIni()){
-          casellaToGo = INI_CASELLA_COLOR[currentColor] + moveDistance;
+          casellaToGo = INI_CASELLA_COLOR[currentColor];
           casellaIni = INI_CASELLA_COLOR[currentColor];
       }else {
           if (casellaToGo != -1){
@@ -46,8 +55,17 @@ var BoardManager = function() {
       var barrera_casella = -1; 
       
       for(var pos_barrera = casellaIni+1; pos_barrera <= casellaToGo; pos_barrera++){
-          arrayPosition = board.verCasellesExteriors(pos_barrera);
+          if(fitxa.getPujant()){
+              arrayPosition = board.verCasellesExteriors(casellaToGo, currentColor);
+          }else {
+              arrayPosition = board.verCasellesExteriors(casellaToGo, -1);
+          }
           if(arrayPosition[0].isEmpty() || arrayPosition[1].isEmpty()){
+              //Comprovar si esta en casella especial per pujar
+              if (pos_barrera == CASELLA_ESPECIAL[currentColor]){
+                  casellaToGo = (casellaToGo - CASELLA_ESPECIAL[currentColor])+1;
+                  fitxa.setPujant(true);
+              }
           }else {
               barrera_casella = pos_barrera;
               barrera_bool = true;
@@ -57,10 +75,15 @@ var BoardManager = function() {
       
       if (barrera_bool){   
           //Hi ha barrera que impedeix el pas
+          fitxes[indexFitxa] = fitxa;
           return [false, fitxes];
       }
       
-      var arrayPosition = board.verCasellesExteriors(casellaToGo);
+      if(fitxa.getPujant()){
+          arrayPosition = board.verCasellesExteriors(casellaToGo, currentColor);
+      }else {
+          arrayPosition = board.verCasellesExteriors(casellaToGo, -1);
+      }
     
       var internal_pos = -1;
       
@@ -70,12 +93,13 @@ var BoardManager = function() {
           internal_pos = 1;
       }else{
           //Les dues posicions estan ocupades
+          fitxes[indexFitxa] = fitxa;
           return [false, fitxes];
       }
       
     //  console.log("internalPo: " + internal_pos);
       var currentStatus = this.getCurrentStatus();
-      var potMoureFitxa = false;
+      var potMoureFitxa = true;
       var teFitxesEnCasa = false;
       var quantsTeACasa = 0;
     //  console.log("CurrentStatus: " + currentStatus);
@@ -93,33 +117,47 @@ var BoardManager = function() {
               if(quantsTeACasa==4){
                 if(moveDistance!=5){
                     console.log("No has sacado un 5");
-                    potMoureFitxa = true;
+                    potMoureFitxa = false;
+                }
+              }
+              if (quantsTeACasa>=1){
+                if(moveDistance==5){
+                    if(fitxa.getPosition() != fitxa.getPosIni()){
+                        console.log("Deberias sacar uno de casa");
+                        fitxes[indexFitxa] = fitxa;
+                        return [false, fitxes];
+                    }
+                }
+                if(moveDistance!=5){
+                    if(fitxa.getPosition() == fitxa.getPosIni()){
+                        console.log("No puedes sacar uno de casa");
+                        if(potMoureFitxa){
+                            fitxes[indexFitxa] = fitxa;
+                            return [false, fitxes];
+                        }
+                    }
                 }
               }
           }
-          if(!potMoureFitxa){
-              if(moveDistance==5){
-                  if(quantsTeACasa!=0){
-                      console.log("ha de moure una fitxa de casa");
-                  }
+          console.log(potMoureFitxa);
+          if(potMoureFitxa){
+          //if(true){
+              board.setPositionStatus(fitxa.getPosition(),BOARD_POSITION_COLOR.EMPTY);
+
+              fitxa.setPosition(arrayPosition[internal_pos].getId());
+              fitxes[indexFitxa] = fitxa;
+              board.setPositionStatus(fitxa.getPosition(), currentStatus);
+
+
+              for(var i = 0; i < 16; i++){
+
+                    var position = boardPositions[fitxes[i].getPosition()];
+
+                    var elementId = fitxes[i].getId();
+                    spriteFitxa[elementId].kill();
+
+                    spriteFitxa[elementId] = game.add.sprite(position.left + OFFSET_FITXA, position.top + OFFSET_FITXA, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
               }
-          board.setPositionStatus(fitxa.getPosition(),BOARD_POSITION_COLOR.EMPTY);
-         // console.log("Position fitxa abans: " + fitxa.getPosition());
-          fitxa.setPosition(arrayPosition[internal_pos].getId());
-          fitxes[i] = fitxa;
-          board.setPositionStatus(fitxa.getPosition(), currentStatus);
-         // console.log("Position fitxa despres: " + fitxa.getPosition());
-          //console.log("posicio 0: " + board.verCasellesExteriors(fitxa.getPosition())[0].isEmpty() + " i posicio 1: " + board.verCasellesExteriors(fitxa.getPosition())[1].isEmpty());
-       
-          for(var i = 0; i < 16; i++){
-                      
-                var position = boardPositions[fitxes[i].getPosition()];
-
-                var elementId = fitxes[i].getId();
-                spriteFitxa[elementId].kill();
-
-                spriteFitxa[elementId] = game.add.sprite(position.left + OFFSET_FITXA, position.top + OFFSET_FITXA, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
-          }
            }
           updateCurrentColor();
 
@@ -140,7 +178,7 @@ var BoardManager = function() {
     return gameFinished;
   };
     
-  // Private
+
   this.getCurrentStatus = function() {
     if(currentColor === PLAYER_COLOR.GROC) {
         return BOARD_POSITION_COLOR.GROC;
@@ -157,7 +195,7 @@ var BoardManager = function() {
   };
   
   
-
+  // Private
   var updateCurrentColor = function() {
     if(currentColor === PLAYER_COLOR.GROC) {
       currentColor = PLAYER_COLOR.VERD;

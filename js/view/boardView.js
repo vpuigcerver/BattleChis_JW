@@ -10,6 +10,7 @@ var BoardView = function() {
     
     var boardPositions = [];
     var fitxes = [];
+    var mFitxesSprites = {};
     var boardManager = new BoardManager();
     
     this.onMouseDown = function(mouseEvent) {
@@ -29,9 +30,9 @@ var BoardView = function() {
                (mouseEvent.y >= dadosLimit.minY) &&
                (mouseEvent.y <= dadosLimit.maxY))
             {
-              console.log("tirar dados");
+              
               valorDados = tirarDados();
-
+              console.log("tirar dados: "+valorDados);
               tirant = 1; //toca mover
               game.world.remove(text);
              
@@ -41,19 +42,10 @@ var BoardView = function() {
             //console.log("intentando dar a fitxa");
             var board = boardManager.getBoard(); 
             var indexFitxa = board.searchPosition(mouseEvent.x, mouseEvent.y, fitxes, boardPositions);
-            var quantsTeACasa = 0;
-          /*  if (Math.floor(indexFitxa/4) == boardManager.getCurrentStatus()){
-                for(var tempContador = 0; tempContador < 4; tempContador++){
-                    if(fitxes[indexFitxa].getPosIni()== fitxes[indexFitxa].getPosition()){
-                        teFitxesEnCasa = true; 
-                        quantsTeACasa = quantsTeACasa +1;
-                    }
-                }
-            }*/
         
            // console.log("dado en fitxa " + indexFitxa);
             if(indexFitxa != -1){
-                var arrayResult = boardManager.makeMove(fitxes, indexFitxa, valorDados, boardPositions, this.mFitxesSprites);
+                var arrayResult = boardManager.makeMove(fitxes, indexFitxa, valorDados, boardPositions, mFitxesSprites);
                 var canMove = arrayResult[0];
                 fitxes = arrayResult[1];
                
@@ -76,14 +68,13 @@ var BoardView = function() {
       self.listener = listener;
     };
     
+    // Private
     var tirarDados = function(){
         var randomdice=Math.round(Math.random()*5)+1;
         dado = window.game.add.sprite(375, 375, 'dados','dado'+randomdice+'.png');
         return randomdice;
     };
     
-        
-    // Private
     var calculateBoardPosition = function() {
       var boardSize = {
           width: window.game.width - (2 * BOARD_LINE_LIMIT_WIDTH),
@@ -117,7 +108,7 @@ var BoardView = function() {
      // debugDrawBoardPositions(); // Comentar para ver bien el tablero
   };
   
-  var debugDrawBoardPositions = function() {
+  this.debugDrawBoardPositions = function() {
     var graphics = window.game.add.graphics(0, 0);
     
     graphics.lineStyle(2, 0x0000FF, 1);
@@ -127,9 +118,10 @@ var BoardView = function() {
       graphics.drawRect(position.left, position.top, position.width, position.height);  
     }
   };
-    
-   //private 
-    var crearFitxas = function() {
+    this.createBoard = function(imagenbattlechis){
+        game.add.sprite(0,0,imagenbattlechis,'battle_battlechis.png');
+        calculateBoardPosition();
+
         var f1 = new Fitxa(1,"groc",66,0);
         var f2 = new Fitxa(2,"groc",88,0);
         var f3 = new Fitxa(3,"groc",108,0);
@@ -153,32 +145,22 @@ var BoardView = function() {
         
         fitxes = [f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16];
         
-        this.mFitxesSprites = {};
-        
         for(var i = 0; i < 16; i++){
             var position = boardPositions[fitxes[i].getPosition()];
             var elementId = fitxes[i].getId();
-            mFitxesSprites[elementId] = game.add.sprite(position.left + OFFSET_FITXA, position.top + OFFSET_FITXA, 'battle_battlechis','fitxa_'+fitxes[i].getColor()+'.png');
+            mFitxesSprites[elementId] = game.add.sprite(position.left + OFFSET_FITXA, position.top + OFFSET_FITXA, imagenbattlechis,'fitxa_'+fitxes[i].getColor()+'.png');
         }
 
-    };
-    
-   
-    
-    // Constructor
-    (function() {
-        window.game.add.sprite(0, 0, 'battle_battlechis','battle_battlechis.png');
-        
-        window.game.input.onDown.add(self.onMouseDown);      
-        calculateBoardPosition();
-        crearFitxas();  
-        
-          if(tirant == 0){
-            text = game.add.text(game.world.centerX-95, game.world.centerY-50, "-START!-\n AQUI", {
+        if(tirant == 0){
+            text = game.add.text(game.world.centerX-95, game.world.centerY-50, "-START!-\nAQUI", {
             font: "45px Arial",
             fill: "#ff0044",
             align: "center"
             });
         }
+    };
+     (function() {
+        window.game.input.onDown.add(self.onMouseDown);     
+         game.load.atlasJSONHash('dados', 'media/img/dados.png', 'media/img/dados.json');
     })();
 };
